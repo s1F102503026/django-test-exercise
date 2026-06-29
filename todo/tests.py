@@ -111,4 +111,3 @@ class TodoViewTestCase(TestCase):
         self.assertEqual(response.context['tasks'][0], task3)
         self.assertEqual(response.context['tasks'][1], task2)
         self.assertEqual(response.context['tasks'][2], task1)
-        
