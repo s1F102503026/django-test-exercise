@@ -11,6 +11,7 @@
   <body>
     <h1>Sample To Do Application</h1>
     <p>You can submit tasks from the following form.</p>
+
     <form action="{% url 'index' %}" method="post">
       {% csrf_token %}
       <div>
@@ -25,6 +26,7 @@
         <button type="submit">Submit</button>
       </div>
     </form>
+
     <br>
 
     <div>
@@ -34,13 +36,16 @@
 
     {% for task in tasks %}
     <div class="text">
-      <h2><a href="{% url 'detail' task.id %}">{{task.title }}</a></h2>
+      <h2>
+        <a href="{% url 'detail' task.id %}">{{ task.title }}</a>
+        <a href="{% url 'edit' task.id %}">[Edit]</a>
+      </h2>
       <ul>
         <li>Posted at: {{ task.posted_at }}</li>
-        {% if task.due_at %} 
+        {% if task.due_at %}
         <li>Due at: {{ task.due_at }}</li>
         {% endif %}
-        {% if task.completed %} 
+        {% if task.completed %}
         <li>Status: Completed</li>
         {% else %}
         <li>Status: Not Completed</li>
