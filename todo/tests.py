@@ -127,3 +127,15 @@ class TodoViewTestCase(TestCase):
         response = client.get('/1/')
 
         self.assertEqual(response.status_code, 404)
+
+    def test_finish_post(self):
+        task = Task(title='task1')
+        task.save()
+        client = Client()
+        response = client.post('/{}/finish/'.format(task.pk))
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/{}/'.format(task.pk), fetch_redirect_response=False)
+
+        task.refresh_from_db()
+        self.assertTrue(task.completed)
