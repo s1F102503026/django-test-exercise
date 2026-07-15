@@ -140,6 +140,33 @@ class TodoViewTestCase(TestCase):
         task.refresh_from_db()
         self.assertTrue(task.completed)
 
+    def test_edit_get_success(self):
+        task = Task(title='task-edit', due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        response = client.get('/{}/edit/'.format(task.pk))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.templates[0].name, 'todo/edit.html')
+        self.assertEqual(response.context['task'], task)
+
+    def test_edit_post_success(self):
+        task = Task(title='task-before', due_at=timezone.make_aware(datetime(2024, 7, 1)))
+        task.save()
+        client = Client()
+        new_due = timezone.make_aware(datetime(2024, 8, 1))
+        response = client.post('/{}/edit/'.format(task.pk), {
+            'title': 'task-after',
+            'due_at': '2024-08-01 00:00:00',
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, '/{}/'.format(task.pk), fetch_redirect_response=False)
+
+        task.refresh_from_db()
+        self.assertEqual(task.title, 'task-after')
+        self.assertEqual(task.due_at, new_due)
+
     def test_delete_post_success(self):
         task = Task(title='task-delete', due_at=timezone.make_aware(datetime(2024, 7, 1)))
         task.save()
